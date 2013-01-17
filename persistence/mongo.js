@@ -1,4 +1,5 @@
-var mongoose = require('mongoose');
+var mongoose = require('mongoose'),
+    model = {};
 
 mongoose.connect('mongodb://localhost/nodium');
 var db = mongoose.connection;
@@ -6,19 +7,19 @@ db.on('error', console.error.bind(console, 'Connection error:'));
 db.once('open', function(callback){
     console.log('The database is ready...');
 });
-var schema = mongoose.Schema({
+var personSchema = mongoose.Schema({
     name: String,
     last: String    
 });
-var Person = mongoose.model('person', schema);
+model.Person = mongoose.model('person', personSchema);
 
 module.exports = {
-    db: db,
-    Person: Person,
-    data: {
+    conn: db,
+    model: model,
+    utils: {
         error: function (err, doc) {
             if (err) {
-                console.error('Failed to insert/update this object: %j', doc);
+                console.error('Failed to treat this object: %j', doc);
             }
         }
     }

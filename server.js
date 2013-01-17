@@ -1,30 +1,24 @@
 var express = require('express'),
-    conn = require('./lib/connection');
-var ob1 = new conn.Person({name: 'Mariano', last: 'Rajoy'}),
-    ob2 = new conn.Person({name: 'Cospedal', last: 'Bruja'}),
-    errF = function (err, doc){
-        if (err) {
-            console.log('putamalder');   
-        }
-    };
-ob1.save(conn.data.error);
-ob2.save(conn.data.error);
+    per = require('./persistence/mongo'),
+    port = 8800;
 
 var app = express();
 
 app.get("/", function(request,response) {
     response.send("Hello World\n");
 });
-app.get("/json", function(request,response) {
-    var ob = {name: "hola", last: "world"};
-    response.send(ob);
+app.get("/people", function(request,response) {
+    per.model.Person.find(function (err, people) {
+        (err) ? response.send(500) : response.send(200, people);
+    });
 });
-app.get("/json/:name", function(request,response) {
-    var ob = {name: request.params.name, last: "world"};
-    response.send(ob);
+app.get("/people/:name", function(request,response) {
+    per.model.Person.findOne({name: request.params.name}, function (err, person) {
+        (err) ? response.send(500) : (person) ? response.send(200, person) : response.send(404);
+    });
 });
 
-app.listen(8800);
 
-console.log("Server running.");
+app.listen(port);
+console.log("Server running in %d.", port);
 
