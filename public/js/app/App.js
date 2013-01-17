@@ -1,9 +1,9 @@
-define(['jquery', 'app/routers/Router'], function ($, Router) {
+define(['jquery', 'routers/Router'], function ($, Router) {
     var router = new Router(),
-        initialize = function () {
+        start = function () {
         };
     return {
-        initialize: initialize,
+        start: start,
         router: router
     };
 });
