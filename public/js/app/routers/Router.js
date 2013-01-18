@@ -1,5 +1,5 @@
-define(['jquery', 'backbone', 'app/models/Model', 'app/views/View'], 
-    function ($, Backbone, Model, View) {
+define(['jquery', 'backbone', 'models/Person', 'models/People', 'views/PeopleView'], 
+    function ($, Backbone, Person, People, PeopleView) {
         var Router = Backbone.Router.extend({
             initialize: function () {
                 Backbone.history.start();  
@@ -7,15 +7,20 @@ define(['jquery', 'backbone', 'app/models/Model', 'app/views/View'],
 
             routes: {
                 '': 'index',
-                'test': 'test'
+                'people': 'people',
+                'people/:name' : 'person'
             },
 
             index: function () {
             },
-            test: function () {
-                new View();
+            people: function () {
+                new PeopleView();
+            },
+            person: function (name) {
+                var person = new People({name: name});
+                person.fetch();
+                new PeopleView(new People([person]));
             }
-        
         });    
         return Router;
     }
