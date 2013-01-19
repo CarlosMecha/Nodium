@@ -3,19 +3,18 @@ define(['jquery', 'backbone', 'models/Person', 'models/People', 'text!app/templa
         var PeopleView = Backbone.View.extend({
             el: '#content',
             initialize: function (people) {
+                // The router has to bind events and sets when this view has to render itself.
                 if (typeof people === "undefined") {
                     people = new People();
-                    people.fetch();
                 }
                 this.people = people;
-                this.render();  
             },
             events: {
 
             },
             render: function () {
                 var templs = new String();
-                this.people.forEach(function (person) { templs += _.template(personTemplate, person); });
+                this.people.forEach(function (person) { templs += _.template(personTemplate, person.toJSON()); });
                 this.$el.html(_.template(peopleTemplate, {people: templs}));
                 return this;
             }

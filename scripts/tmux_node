@@ -1,5 +1,7 @@
 #!/bin/bash
 
+cd ~/Workspace/Nodium;
+
 tmux new-session -d -s wb_node
  
 tmux new-window -t wb_node:1 -n 'src' -c '~/Workspace/Nodium' 'ivim -p *.js'

@@ -1,5 +1,5 @@
 requirejs.config({
-    baseUrl: './js',
+    baseUrl: '/static/js',
     paths: {
         'jquery': 'lib/jquery',
         'backbone': 'lib/backbone',
@@ -15,8 +15,7 @@ requirejs.config({
         'backbone': {
             deps: ['underscore', 'jquery'],
             exports: 'Backbone'
-        },
-        'App': {deps: ['backbone']}
+        }
     }
 });
 requirejs(['jquery', 'backbone', 'underscore', 'app/App'], function ($, Backbone, _, App) { 
