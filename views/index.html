@@ -3,14 +3,22 @@
 <head>
     <title>Nodium</title>
     <script data-main="/static/js/main" src="/static/js/lib/require.js"></script>
+    <link type="text/css" rel="stylesheet" href="/static/css/main.css"></link>
 </head>
 <body>
-    <h1>Hi People</h1>
-    <p>Your first request has been processed at <%= time %>.</p>
-    <div class="links">
-        <a href="#people">Fetch people</a>, <a href="#people/Mariano">Fetch Marianico</a>
+    <h1 id="title">Hi People</h1>
+    <div id="menu">
+        <ul>
+            <li><a href="#">Find</a></li>
+            <li><a href="#people">Show all</a></li>
+            <li><a href="#people/create">New person</a></li>
+        </ul>
     </div>
     <div id="content"></div>
+    <div id="footer">
+        <div class="left">Nodium 2013</div>
+        <div class="right">Your first request has been processed at <%= time %>.</div>
+    </div>
 </body>
 </html>
 

@@ -1,5 +1,5 @@
-define(['jquery', 'backbone', 'models/Person', 'models/People', 'text!app/templates/people.html', 'text!app/templates/person.html'],
-    function ($, Backbone, Person, People, peopleTemplate, personTemplate) {
+define(['jquery', 'backbone', 'models/Person', 'models/People', 'text!app/templates/people.html', 'text!app/templates/person-row.html'],
+    function ($, Backbone, Person, People, peopleTemplate, personRowTemplate) {
         var PeopleView = Backbone.View.extend({
             el: '#content',
             initialize: function (people) {
@@ -14,10 +14,10 @@ define(['jquery', 'backbone', 'models/Person', 'models/People', 'text!app/templa
             },
             render: function () {
                 var templs = new String();
-                this.people.forEach(function (person) { templs += _.template(personTemplate, person.toJSON()); });
+                this.people.forEach(function (person) { templs += _.template(personRowTemplate, person.toJSON()); });
                 this.$el.html(_.template(peopleTemplate, {people: templs}));
                 return this;
-            }
+            },
         });  
         
         return PeopleView;  

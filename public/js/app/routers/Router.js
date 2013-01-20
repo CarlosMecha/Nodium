@@ -1,29 +1,30 @@
-define(['jquery', 'backbone', 'models/Person', 'models/People', 'views/PeopleView'], 
-    function ($, Backbone, Person, People, PeopleView) {
+define(['jquery', 'backbone', 'models/Person', 'models/People', 'views/PersonView', 'views/PeopleView'], 
+    function ($, Backbone, Person, People, PersonView, PeopleView) {
         var Router = Backbone.Router.extend({
             currentView: null,
             initialize: function () {
-                Backbone.history.start();  
+                Backbone.history.start();
+                this.people = new People();
             },
             routes: {
                 '': 'index',
                 'people': 'people',
-                'people/:name' : 'person'
+                'people/:id' : 'person'
             },
 
             index: function () {
             },
             people: function () {
-                var view = new PeopleView();
-                view.people.fetch();
-                view.people.on('reset', view.render, view);
+                var view = new PeopleView(this.people);
+                this.people.fetch();
+                this.people.on('reset', view.render, view);
             },
-            person: function (name) {
-                var person = new Person({name: name}),
-                    view = new PeopleView(new People([person]));
+            person: function (id) {
+                var person = new Person({_id: id}, {collection: this.people}),
+                    view = new PersonView(person);
                 person.fetch();
                 // Backbone triggers 'change' when a model has changed inside a collection.
-                view.people.on('change', view.render, view);
+                view.person.on('change', view.render, view);
                 this.changeView(view);
             },
             changeView: function (newView) {

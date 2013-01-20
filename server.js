@@ -27,10 +27,21 @@ app.get("/people", function(request,response) {
     });
 });
 
-app.get("/people/:name", function(request,response) {
-    per.models.Person.findOne({name: request.params.name}, function (err, person) {
+app.get("/people/:id", function(request,response) {
+    per.models.Person.findOne({ _id: new per.ObjectId(request.params.id) }, function (err, person) {
         (err) ? response.send(500) : (person) ? response.send(200, person) : response.send(404);
     });
+});
+
+app.get("/people/find", function(request,response) {
+    var nick = request.query.nick;
+    if (typeof nick === "string" && null != nick && nick.length > 0) {
+        per.models.Person.findOne({ nickName: nick.toLowerCase() }, function (err, person) {
+            (err) ? response.send(500) : (person) ? response.send(200, person) : response.send(404);
+        });
+    } else {
+        response.send(400);
+    }
 });
 
 app.listen(port);
