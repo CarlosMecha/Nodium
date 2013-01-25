@@ -1,15 +1,19 @@
+<div class="errors">
+    <ul>
+        <li><span class="field-error" data-error-for="nickName"></span></li>
+        <li><span class="field-error" data-error-for="firstName"></span></li>
+        <li><span class="field-error" data-error-for="lastName"></span></li>
+    </ul>
+</div>
 <form>
     <div class="person">
         <input id="id" name="_id" type="hidden" value="<%= _id %>"/>
         <label for="nickName">Nickname:</label>
-        <input id="nickName" name="nickName" type="text" value="<%= nickName %>" data-input="nickName"/>
-        <span class="field-error" data-error-for="nickName"></span><br/>
+        <input id="nickName" name="nickName" type="text" value="<%= nickName %>" data-input="nickName"/><br/>
         <label for="firstName">Firstname:</label>
-        <input id="firstName" name="firstName" type="text" value="<%= firstName %>" data-input="firstName"/>
-        <span class="field-error" data-error-for="firstName"></span><br/>
+        <input id="firstName" name="firstName" type="text" value="<%= firstName %>" data-input="firstName"/><br/>
         <label for="lastName">Lastname:</label>
         <input id="lastName" name="lastName" type="text" value="<%= lastName %>" data-input="lastName"/>
-        <span class="field-error" data-error-for="lastName"></span><br/>
     </div>
     <div class="form-footer">
         <input type="reset" value="Reset"/>

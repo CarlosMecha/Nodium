@@ -55,6 +55,9 @@ a:hover {
 }
 
 #content .field-error {
+}
+
+#content .errors {
     color: red;
 }
 
