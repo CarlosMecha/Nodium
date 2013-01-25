@@ -1,4 +1,4 @@
-define(['jquery', 'backbone', 'models/Person', 'models/People', 'text!app/templates/people.html', 'text!app/templates/person-row.html'],
+define(['jquery', 'backbone', 'models/Person', 'models/People', 'text!templ/people.html', 'text!templ/person-row.html'],
     function ($, Backbone, Person, People, peopleTemplate, personRowTemplate) {
         var PeopleView = Backbone.View.extend({
             el: '#content',

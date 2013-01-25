@@ -24,7 +24,7 @@ a:hover {
     background-color: #33342D;
     text-align: center;
     height: 7%;
-    min-height: 25px;
+    min-height: 35px;
     margin-bottom: 10px;
 }
 
@@ -48,6 +48,14 @@ a:hover {
     border: 1px solid #690;
     padding: 1em;
     margin: 10px;
+}
+
+#content .input-error {
+    border: 2px solid red;
+}
+
+#content .field-error {
+    color: red;
 }
 
 #footer {

@@ -4,10 +4,10 @@ cd ~/Workspace/Nodium;
 
 tmux new-session -d -s wb_node
  
-tmux new-window -t wb_node:1 -n 'src' -c '~/Workspace/Nodium' 'ivim -p *.js'
+tmux new-window -t wb_node:1 -n 'src' 'vim -p *.js'
 tmux new-window -t wb_node:2 -n 'root' 'sudo su -'
-tmux new-window -t wb_node:3 -n 'mongo' -c '~/Workspace/Nodium/' 'mongo nodium'
-tmux new-window -t wb_node:4 -n 'jake' -c '~/Workspace/Nodium/'
+tmux new-window -t wb_node:3 -n 'mongo' 'mongo nodium'
+tmux new-window -t wb_node:4 -n 'run' 
 
 tmux select-window -t wb_node:1
 tmux -2 attach-session -t wb_node

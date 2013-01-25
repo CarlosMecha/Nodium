@@ -9,7 +9,7 @@ requirejs.config({
         'views' : 'app/views',
         'routers' : 'app/routers',
         'models' : 'app/models',
-        'templ' : 'app/templates'
+        'templ' : '../templates'
     },
     shim: {
         'backbone': {
@@ -18,6 +18,6 @@ requirejs.config({
         }
     }
 });
-requirejs(['jquery', 'backbone', 'underscore', 'app/App'], function ($, Backbone, _, App) { 
+requirejs(['jquery', 'backbone', 'underscore', 'App'], function ($, Backbone, _, App) { 
     App.start();
 });
