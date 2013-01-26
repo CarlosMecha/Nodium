@@ -15,6 +15,9 @@ define(['jquery', 'backbone', 'models/Person', 'text!templ/person.html'],
                 this.$el.html(_.template(personTemplate, this.person.toJSON()));
                 this.rendered = true;
                 this.fillCache();
+                if (this.person.id) {
+                    this.$cache.inputs.nickName.prop('disabled', true);
+                }
                 if (this.containsErrors) this.clearErrors();
                 return this;
             },
@@ -35,7 +38,7 @@ define(['jquery', 'backbone', 'models/Person', 'text!templ/person.html'],
                 this.$el.find('input[data-input]').each(function (i) {
                     self.$cache.inputs[$(this).data('input')] = $(this);
                 });
-                return $cache;
+                return this.$cache;
             },
             submit: function () {
                 var $form = this.$el.find('form');

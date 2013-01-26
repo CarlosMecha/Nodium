@@ -9,9 +9,6 @@ define(['jquery', 'backbone', 'models/Person', 'models/People', 'text!templ/peop
                 }
                 this.people = people;
             },
-            events: {
-
-            },
             render: function () {
                 var templs = new String();
                 this.people.forEach(function (person) { templs += _.template(personRowTemplate, person.toJSON()); });

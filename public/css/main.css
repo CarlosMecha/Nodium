@@ -50,6 +50,12 @@ a:hover {
     margin: 10px;
 }
 
+#content .transition {
+    height: 10%;
+    padding: 1em;
+    min-height: 35px;
+}
+
 #content .input-error {
     border: 2px solid red;
 }

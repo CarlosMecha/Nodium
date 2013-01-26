@@ -16,31 +16,42 @@ app.configure(function () {
     app.use('/static', express.static(__dirname + '/public'));
 });
 
-app.get("/", function(request,response) {
+app.get("/", function(req,res) {
     var time = moment().format('MMMM Do YYYY, HH:mm:ss');
-    response.render('index', { time: time });
+    res.render('index', { time: time });
 });
 
-app.get("/people", function(request,response) {
+app.get("/people", function(req,res) {
     per.models.Person.find(function (err, people) {
-        (err) ? response.send(500) : response.send(200, people);
+        (err) ? res.send(500) : res.send(200, people);
     });
 });
 
-app.get("/people/:id", function(request,response) {
-    per.models.Person.findOne({ _id: new per.ObjectId(request.params.id) }, function (err, person) {
-        (err) ? response.send(500) : (person) ? response.send(200, person) : response.send(404);
+app.get("/people/:id", function(req,res) {
+    per.models.Person.findOne({ _id: req.params.id }, function (err, person) {
+        (err) ? res.send(500) : (person) ? res.send(200, person) : res.send(404);
     });
 });
 
-app.get("/people/find", function(request,response) {
-    var nick = request.query.nick;
+app.put("/people/:id", function(req,res) {
+    console.log(req.body);
+    var update = { firstName: req.body.firstName, lastName: req.body.lastName };
+    per.models.Person.update({ _id: req.params.id }, { $set: update }, 
+        {multi: false},
+        function (err, count) {
+            (err) ? res.send(500) : (count > 0) ? res.send(200) : res.send(404);   
+        }
+    );
+});
+
+app.get("/people/find", function(req,res) {
+    var nick = req.query.nick;
     if (typeof nick === "string" && null != nick && nick.length > 0) {
         per.models.Person.findOne({ nickName: nick.toLowerCase() }, function (err, person) {
-            (err) ? response.send(500) : (person) ? response.send(200, person) : response.send(404);
+            (err) ? res.send(500) : (person) ? res.send(200, person) : res.send(404);
         });
     } else {
-        response.send(400);
+        res.send(400);
     }
 });
 
