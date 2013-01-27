@@ -22,7 +22,8 @@ define(['jquery', 'backbone', 'models/Person', 'models/People', 'views/PersonVie
             routes: {
                 '': 'find',
                 'people': 'people',
-                'people/:id' : 'person'
+                'people/:id' : 'person',
+                'create' : 'create'
             },
             startComputing: function () {
                 if (this.computing) return;
@@ -55,15 +56,20 @@ define(['jquery', 'backbone', 'models/Person', 'models/People', 'views/PersonVie
                 this.transition();
             },
             person: function (id) {
-                var person = this.people.find(function (model) {
-                        return (model.id && model.id === id);
-                    });
+                var person = this.people.findById(id);
                 if (!person) {
                     this.navigate('/people', {trigger:true});
                     return;
                 }
                 var view = new PersonView(person, this);
                 this.selectSection('people');
+                this.changeView(view);
+                this.transition();
+            },
+            create: function () {
+                var person = new Person({}, {collection: this.people}),
+                    view = new PersonView(person, this, true);
+                this.selectSection('create');
                 this.changeView(view);
                 this.transition();
             },

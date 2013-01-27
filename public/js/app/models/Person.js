@@ -15,6 +15,8 @@ define(['backbone'], function (Backbone) {
                     errors.nickName = "Nickname couldn't be empty.";
                 } else if (!nickNameValidator.test(attrs.nickName)) {
                     errors.nickName = "Nickname doesn't have a valid format.";
+                } else if (this.collection.findByNickName(attrs.nickName.toLowerCase())) { 
+                    errors.nickName = "Other person has the same nickname.";
                 }
             }
 

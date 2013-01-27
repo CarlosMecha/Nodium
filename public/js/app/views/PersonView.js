@@ -4,32 +4,43 @@ define(['jquery', 'backbone', 'models/Person', 'text!templ/person.html'],
             el: '#content',
             containsErrors: false,
             rendered: false,
-            toDelete: false,
-            initialize: function (person, router) {
+            action: 'update',
+            emptyPerson: {_id: "", nickName: "", firstName: "", lastName: ""},
+            initialize: function (person, router, isNew) {
                 this.person = person;
                 this.router = router;
+                if (isNew) this.action = 'create';
                 this.person.on('invalid', this.printErrors, this);
+                this.person.on('error', function () {
+                    this.printErrors(this.person, {server: 'Error from server.'});
+                }, this);
             },
             events: {
                 'submit form': 'submit',
                 'change #delete': 'deleteCheckbox',
             },
             render: function () {
-                this.$el.html(_.template(personTemplate, this.person.toJSON()));
+                var model = (this.action === 'create') ? this.emptyPerson : this.person.toJSON();
+                this.$el.html(_.template(personTemplate, model));
                 this.rendered = true;
                 this.fillCache();
-                if (this.person.id) {
-                    this.$cache.inputs.nickName.prop('disabled', true);
+                this.containsErrors && this.clearErrors();
+                switch (this.action) {
+                    case 'update': this.$cache.inputs.nickName.prop('disabled', true); break;
+                    case 'create': this.$el.find('#delete').prop('disabled', true); break;
+                    default: break;
                 }
-                if (this.containsErrors) this.clearErrors();
                 return this;
             },
             deleteCheckbox: function () {
-                this.toDelete = !this.toDelete;
-                if (this.$cache.submit) {
-                    (this.toDelete) ? this.$cache.submit.val('Delete') 
-                        : this.$cache.submit.val('Save');
+                switch (this.action) {
+                    case 'update': this.action = 'delete'; break;
+                    case 'delete': this.action = 'update'; break;
+                    default: break;
                 }
+                (this.$cache.submit && this.action === 'delete') 
+                    ? this.$cache.submit.val('Delete') 
+                        : this.$cache.submit.val('Save');
             },
             fillCache: function () {
                 if (!this.rendered) return;
@@ -44,6 +55,8 @@ define(['jquery', 'backbone', 'models/Person', 'text!templ/person.html'],
                 });
                 this.$el.find('span[data-error-for]').each(function () {
                     self.$cache.error.fields[$(this).data('errorFor')] = $(this).hide();
+                    // Hiding <li> element.
+                    $(this).parent().hide();
                 });
                 this.$el.find('input[data-input]').each(function () {
                     self.$cache.inputs[$(this).data('input')] = $(this);
@@ -56,30 +69,47 @@ define(['jquery', 'backbone', 'models/Person', 'text!templ/person.html'],
             submit: function (event) {
                 var $form = this.$el.find('form'),
                     attrs = {};
-                if (this.toDelete) {
-                    this.person.collection.once('remove', function () {
-                        this.router.navigate('/people', {trigger: true});
-                    }, this);
-                    this.person.destroy();
-                } else {
-                    $form.serializeArray().forEach(function (data) {
-                        if (data.name !== 'delete') attrs[data.name] = data.value;
-                    });
-                    this.person.once('change', function () {
-                        this.router.navigate('/people/' + this.person.id, {trigger: true});    
-                    }, this);
-                    this.person.save(attrs);
-                }
                 event.preventDefault();
+                switch (this.action) {
+                    case 'delete':
+                        this.person.collection.once('remove', function () {
+                            this.router.navigate('/people', {trigger: true});
+                        }, this);
+                        this.person.destroy();
+                        break;
+                    case 'update': 
+                        $form.serializeArray().forEach(function (data) {
+                            if (data.name !== 'delete') attrs[data.name] = data.value;
+                        });
+                        this.person.once('change', function () {
+                            this.router.navigate('/people/' + this.person.id, {trigger: true});    
+                        }, this);
+                        this.person.save(attrs);
+                        break;
+                    case 'create':
+                        $form.serializeArray().forEach(function (data) {
+                            if (data.name !== 'delete' && data.name !== '_id') {
+                                attrs[data.name] = data.value;
+                            }
+                        });
+                        this.person.once('sync', function () {
+                            this.person.collection.add(this.person);
+                            this.router.navigate('/people/' + this.person.id, {trigger: true});    
+                        }, this);
+                        this.person.save(attrs);
+                        break;
+                    default:
+                }
             },
-            printErrors: function (model, errors, options) {
+            printErrors: function (model, errors) {
                 var self = this;
                 if (!this.rendered) return;
-                if (this.$cache.error.container) this.$cache.error.container.show();
+                this.$cache.error.container && this.$cache.error.container.show();
                 if (_.isObject(errors)) { 
                     _.map(errors, function (error, field) {
                         if (self.$cache.error.fields[field]) {
                             self.$cache.error.fields[field].show().text(error);
+                            self.$cache.error.fields[field].parent().show();
 
                             if (self.$cache.inputs[field]) {
                                 self.$cache.inputs[field].addClass('input-error');
@@ -94,6 +124,7 @@ define(['jquery', 'backbone', 'models/Person', 'text!templ/person.html'],
                 if (this.$cache.error.container) this.$cache.error.container.hide();
                 for (var error in this.$errorsCache) {
                     this.$cache.error.fields[error].hide().text('');
+                    this.$cache.error.fields[error].parent().hide();
                 }
                 for (var input in this.$inputsCache) {
                     this.$cache.inputs[input].removeClass('input-error');

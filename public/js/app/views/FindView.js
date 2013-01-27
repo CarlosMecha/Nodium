@@ -29,9 +29,7 @@ define(['jquery', 'backbone', 'text!templ/find.html'],
             find: function () {
                 this.router.startComputing();
                 var nickName = this.$cache.input.val().trim().toLowerCase(),
-                    person = this.people.find(function (model) {
-                        return (model.get('nickName') && model.get('nickName').toLowerCase() === nickName);
-                    });
+                    person = this.people.findByNickName(nickName);
                 this.router.stopComputing();
                 if (person) {
                     this.router.navigate('/people/' + person.id, {trigger: true});

@@ -27,6 +27,12 @@ app.get("/people", function(req,res) {
     });
 });
 
+app.post("/people", function(req,res) {
+    per.models.Person.create(req.body, function (err, doc) {
+        (err) ? res.send(400) : res.send(200, doc);
+    });
+});
+
 app.get("/people/:id", function(req,res) {
     per.models.Person.findOne({ _id: req.params.id }, function (err, person) {
         (err) ? res.send(500) : (person) ? res.send(200, person) : res.send(404);
