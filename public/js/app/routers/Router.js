@@ -12,12 +12,12 @@ define(['jquery', 'backbone', 'models/Person', 'models/People', 'views/PersonVie
                 });
                 // Fetch people from server.
                 this.startComputing();
-                this.people.fetch();
-                this.people.on('reset', function () {
+                this.people.once('reset', function () {
                     this.stopComputing();
                     Backbone.history.start();    
                     this.navigate('', {trigger: true});
                 }, this);
+                this.people.fetch();
             },
             routes: {
                 '': 'find',
@@ -55,13 +55,17 @@ define(['jquery', 'backbone', 'models/Person', 'models/People', 'views/PersonVie
                 this.transition();
             },
             person: function (id) {
-                var person = new Person({_id: id}, {collection: this.people}),
-                    view = new PersonView(person);
+                var person = this.people.find(function (model) {
+                        return (model.id && model.id === id);
+                    });
+                if (!person) {
+                    this.navigate('/people', {trigger:true});
+                    return;
+                }
+                var view = new PersonView(person, this);
                 this.selectSection('people');
-                person.fetch();
-                // Backbone triggers 'change' when a model has changed inside a collection.
-                view.person.on('change', this.transition, this);
                 this.changeView(view);
+                this.transition();
             },
             changeView: function (newView) {
                 if (this.currentView) {
@@ -82,11 +86,7 @@ define(['jquery', 'backbone', 'models/Person', 'models/People', 'views/PersonVie
             },
             selectSection: function (section) {
                 _.map(this.$sections, function (el, s) {
-                    if (s === section) {
-                        el.addClass('selected');
-                    } else {
-                        el.removeClass('selected');
-                    }
+                    (s === section) ? el.addClass('selected') : el.removeClass('selected');
                 });
             }
         });    

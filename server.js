@@ -34,12 +34,19 @@ app.get("/people/:id", function(req,res) {
 });
 
 app.put("/people/:id", function(req,res) {
-    console.log(req.body);
     var update = { firstName: req.body.firstName, lastName: req.body.lastName };
     per.models.Person.update({ _id: req.params.id }, { $set: update }, 
         {multi: false},
         function (err, count) {
             (err) ? res.send(500) : (count > 0) ? res.send(200) : res.send(404);   
+        }
+    );
+});
+
+app.delete("/people/:id", function(req,res) {
+    per.models.Person.findByIdAndRemove(req.params.id, null,
+        function (err, doc) {
+            (err) ? res.send(500) : (doc) ? res.send(200) : res.send(404);   
         }
     );
 });

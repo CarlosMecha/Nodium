@@ -4,12 +4,15 @@ define(['jquery', 'backbone', 'models/Person', 'text!templ/person.html'],
             el: '#content',
             containsErrors: false,
             rendered: false,
-            initialize: function (person) {
+            toDelete: false,
+            initialize: function (person, router) {
                 this.person = person;
+                this.router = router;
                 this.person.on('invalid', this.printErrors, this);
             },
             events: {
-                'submit form': 'submit'
+                'submit form': 'submit',
+                'change #delete': 'deleteCheckbox',
             },
             render: function () {
                 this.$el.html(_.template(personTemplate, this.person.toJSON()));
@@ -21,6 +24,13 @@ define(['jquery', 'backbone', 'models/Person', 'text!templ/person.html'],
                 if (this.containsErrors) this.clearErrors();
                 return this;
             },
+            deleteCheckbox: function () {
+                this.toDelete = !this.toDelete;
+                if (this.$cache.submit) {
+                    (this.toDelete) ? this.$cache.submit.val('Delete') 
+                        : this.$cache.submit.val('Save');
+                }
+            },
             fillCache: function () {
                 if (!this.rendered) return;
                 this.$cache = {};
@@ -29,24 +39,38 @@ define(['jquery', 'backbone', 'models/Person', 'text!templ/person.html'],
                 this.$cache.error.fields = {};
                 this.$cache.inputs = {};
                 var self = this;
-                this.$el.find('.errors').each(function (i) {
+                this.$el.find('.errors').each(function () {
                     self.$cache.error.container = $(this).hide();    
                 });
-                this.$el.find('span[data-error-for]').each(function (i) {
+                this.$el.find('span[data-error-for]').each(function () {
                     self.$cache.error.fields[$(this).data('errorFor')] = $(this).hide();
                 });
-                this.$el.find('input[data-input]').each(function (i) {
+                this.$el.find('input[data-input]').each(function () {
                     self.$cache.inputs[$(this).data('input')] = $(this);
+                });
+                this.$el.find(':submit').each(function () {
+                    self.$cache.submit = $(this); 
                 });
                 return this.$cache;
             },
-            submit: function () {
-                var $form = this.$el.find('form');
-                var attrs = {};
-                $form.serializeArray().forEach(function (data) {
-                    attrs[data.name] = data.value;
-                });
-                this.person.save(attrs);
+            submit: function (event) {
+                var $form = this.$el.find('form'),
+                    attrs = {};
+                if (this.toDelete) {
+                    this.person.collection.once('remove', function () {
+                        this.router.navigate('/people', {trigger: true});
+                    }, this);
+                    this.person.destroy();
+                } else {
+                    $form.serializeArray().forEach(function (data) {
+                        if (data.name !== 'delete') attrs[data.name] = data.value;
+                    });
+                    this.person.once('change', function () {
+                        this.router.navigate('/people/' + this.person.id, {trigger: true});    
+                    }, this);
+                    this.person.save(attrs);
+                }
+                event.preventDefault();
             },
             printErrors: function (model, errors, options) {
                 var self = this;

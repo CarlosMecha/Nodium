@@ -16,23 +16,21 @@ define(['jquery', 'backbone', 'text!templ/find.html'],
                 this.rendered = true;
                 return this;
             },
-            prepareFind: function () {
+            prepareFind: function (event) {
                 if (!this.rendered) return;
                 if (this.$cache.refresh.is(':checked')) {
                     this.people.fetch();
-                    this.people.on('reset', this.find, this);
+                    this.people.once('reset', this.find, this);
                 } else {
                     this.find();
                 }
+                event.preventDefault();
             },
             find: function () {
                 this.router.startComputing();
                 var nickName = this.$cache.input.val().trim().toLowerCase(),
                     person = this.people.find(function (model) {
-                        if (model.get('nickName')) {
-                            return (model.get('nickName').toLowerCase() === nickName);
-                        }
-                        return false;    
+                        return (model.get('nickName') && model.get('nickName').toLowerCase() === nickName);
                     });
                 this.router.stopComputing();
                 if (person) {

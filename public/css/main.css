@@ -3,8 +3,9 @@ body {
     background: #46483E;
     color: #EEE;
     font-size: 14px;
+    width: 50%;
     min-width: 640px;
-    margin: 0;
+    margin: 0 auto;
 }
 
 a {
@@ -43,11 +44,14 @@ a:hover {
     font-weight: bold;
 }
 
-#content {
-    text-align: center;
+.page-container {
     border: 1px solid #690;
     padding: 1em;
     margin: 10px;
+}
+
+#content {
+    padding: 1em;
 }
 
 #content .transition {
@@ -65,6 +69,18 @@ a:hover {
 
 #content .errors {
     color: red;
+}
+
+#content .form-footer {
+    text-align: right;
+}
+
+#content .search-footer {
+    text-align: center;
+}
+
+#content .person-row {
+    list-style-type: none;
 }
 
 #footer {
